@@ -1,3 +1,0 @@
-﻿OpenGL Module.obj : error LNK2019: unresolved external symbol _glfwInit referenced in function _main
-C:\Source\lib\glfw3.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
-C:\HKU 2\graphics programming\git repo\opengl-playground\OpenGL Module\Debug\OpenGL Module.exe : fatal error LNK1120: 1 unresolved externals

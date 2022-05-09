@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ResolveNugetPackages>false</ResolveNugetPackages>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FDBE97AE-4372-3E9E-A26F-F9C83D23D2CB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\glfw\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/glfw/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/glfw "-BF:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground" --check-stamp-file "F:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\WriteBasicConfigVersionFile.cmake;C:\glfw\cmake_uninstall.cmake.in;C:\glfw\src\glfw3.pc.in;C:\glfw\src\glfw3Config.cmake.in;C:\glfw\src\glfw_config.h.in;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/glfw/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/glfw "-BF:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground" --check-stamp-file "F:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\WriteBasicConfigVersionFile.cmake;C:\glfw\cmake_uninstall.cmake.in;C:\glfw\src\glfw3.pc.in;C:\glfw\src\glfw3Config.cmake.in;C:\glfw\src\glfw_config.h.in;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/glfw/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/glfw "-BF:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground" --check-stamp-file "F:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\WriteBasicConfigVersionFile.cmake;C:\glfw\cmake_uninstall.cmake.in;C:\glfw\src\glfw3.pc.in;C:\glfw\src\glfw3Config.cmake.in;C:\glfw\src\glfw_config.h.in;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/glfw/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/glfw "-BF:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground" --check-stamp-file "F:/HKU/Jaar 2/blok 4/kernmodule/opengl-playground/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\WriteBasicConfigVersionFile.cmake;C:\glfw\cmake_uninstall.cmake.in;C:\glfw\src\glfw3.pc.in;C:\glfw\src\glfw3Config.cmake.in;C:\glfw\src\glfw_config.h.in;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\3.23.1\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\ZERO_CHECK.vcxproj">
+      <Project>{AD090395-24EF-3627-B38C-F8148927488A}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\boing.vcxproj">
+      <Project>{5AF67D52-3C30-3DD5-8F36-94CEE1A6233B}</Project>
+      <Name>boing</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\clipboard.vcxproj">
+      <Project>{C5DBB39A-759C-348C-AFE4-D911585AE00F}</Project>
+      <Name>clipboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\cursor.vcxproj">
+      <Project>{FBDD0483-D79B-30D9-B6A3-071732D46D7B}</Project>
+      <Name>cursor</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\empty.vcxproj">
+      <Project>{A7B30A98-0932-362D-931C-0F4763DA6470}</Project>
+      <Name>empty</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\events.vcxproj">
+      <Project>{D83138E4-3F17-3239-A87C-1EF71993110D}</Project>
+      <Name>events</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\gamma.vcxproj">
+      <Project>{69D518D9-5579-34BC-A921-E46AB19A9D6C}</Project>
+      <Name>gamma</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\gears.vcxproj">
+      <Project>{EC7D051D-A5C1-314C-99B0-78DAFA8FB4F9}</Project>
+      <Name>gears</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\src\glfw.vcxproj">
+      <Project>{47AA9777-FDBF-38D1-8938-54A6876AC101}</Project>
+      <Name>glfw</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\glfwinfo.vcxproj">
+      <Project>{BFFD5A06-49E6-399B-92A3-0AFC34068B5A}</Project>
+      <Name>glfwinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\heightmap.vcxproj">
+      <Project>{7D94CCEB-165D-392C-893E-4FFEE0E1C710}</Project>
+      <Name>heightmap</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\icon.vcxproj">
+      <Project>{365ABBA9-A6EA-3AAF-B59F-30693B8E773E}</Project>
+      <Name>icon</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\iconify.vcxproj">
+      <Project>{001E660E-C329-38C0-9971-C13AA4524085}</Project>
+      <Name>iconify</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\inputlag.vcxproj">
+      <Project>{9E36DB15-AE2A-38B1-9FC9-2F87A7F2B590}</Project>
+      <Name>inputlag</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\joysticks.vcxproj">
+      <Project>{DF2FE795-A27D-3807-9C7B-18ED0E668DEA}</Project>
+      <Name>joysticks</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\monitors.vcxproj">
+      <Project>{4FAADA71-8AC9-32B6-A6F1-C809EC62A8EB}</Project>
+      <Name>monitors</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\msaa.vcxproj">
+      <Project>{252F8C0C-C45D-3F70-B61E-6A9BFA357173}</Project>
+      <Name>msaa</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\offscreen.vcxproj">
+      <Project>{ADCE3FB0-0D61-301D-BB8A-5D310AC957A3}</Project>
+      <Name>offscreen</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\opacity.vcxproj">
+      <Project>{E8A02E78-29A1-3A32-92F0-BBADA7BD5166}</Project>
+      <Name>opacity</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\particles.vcxproj">
+      <Project>{0CE8BC3F-0E85-34F0-BAB2-0B9AB14F8671}</Project>
+      <Name>particles</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\reopen.vcxproj">
+      <Project>{773CAA61-948D-3E09-BC17-B9F6B8DEB8F5}</Project>
+      <Name>reopen</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\sharing.vcxproj">
+      <Project>{24CC3AAB-326B-300D-86B5-47114084B19F}</Project>
+      <Name>sharing</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\simple.vcxproj">
+      <Project>{FA06B4DA-C492-31E0-83FE-9F515B1986D2}</Project>
+      <Name>simple</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\splitview.vcxproj">
+      <Project>{738E8B12-9424-3F7A-8BAA-935DE64C440E}</Project>
+      <Name>splitview</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\tearing.vcxproj">
+      <Project>{65BBE8FC-9526-3462-A861-89D3E4E99DDC}</Project>
+      <Name>tearing</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\threads.vcxproj">
+      <Project>{4436AFF2-D861-3C5A-9EE7-35A646878DC9}</Project>
+      <Name>threads</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\timeout.vcxproj">
+      <Project>{61DB5C85-41A8-3EB0-9D59-F713E8A091CA}</Project>
+      <Name>timeout</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\title.vcxproj">
+      <Project>{5E4EA460-9D70-3C44-AA2C-A36CB7E40B29}</Project>
+      <Name>title</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\triangle-vulkan.vcxproj">
+      <Project>{F836514F-C7D2-3E52-B5CD-2D623A950AC8}</Project>
+      <Name>triangle-vulkan</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\examples\wave.vcxproj">
+      <Project>{67608D47-1CD4-3EE6-A6FE-61F6FE0C1E01}</Project>
+      <Name>wave</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\tests\windows.vcxproj">
+      <Project>{F82720AF-D55D-3046-BC8D-B2915CEA80FC}</Project>
+      <Name>windows</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
