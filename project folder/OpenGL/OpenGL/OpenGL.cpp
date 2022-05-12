@@ -1,8 +1,8 @@
-#include <iostream>
 #include <glad\glad.h>
 #include "GLFW\glfw3.h"
-#include <shaders/shader.h> // is in include directory
 #include "stb_image.h"
+#include <shaders/shader.h> // is in include directory
+#include <iostream>
 
 int main()
 {
@@ -13,8 +13,14 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Open GL Test", nullptr, nullptr);
-    glfwMakeContextCurrent(window);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "Open GL Test", NULL, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window); 
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -40,14 +46,14 @@ int main()
     unsigned int indices[] =
     {
         0, 1, 2,
-        3, 0, 2,
+        3, 0, 2
     };
 
     unsigned int VAO; // vertex array object
-    glGenVertexArrays(1, &VAO);
     unsigned int VBO; // vertex buffer object
-    glGenBuffers(1, &VBO);
     unsigned int EBO; // element buffer object
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
@@ -58,7 +64,7 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
     glEnableVertexAttribArray(0);
     // color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
@@ -67,11 +73,7 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
     glEnableVertexAttribArray(2);
 
-    // clean up the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // texture
+    // textures
     unsigned int texture1, texture2;
 
     // set texture 1
@@ -87,7 +89,7 @@ int main()
     unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     stbi_image_free(data);
@@ -114,6 +116,10 @@ int main()
     basicShader.setInt("texture2", 1);
 
     // END SETUP OBJECT
+    
+    // clean up the buffer
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window))
     {
