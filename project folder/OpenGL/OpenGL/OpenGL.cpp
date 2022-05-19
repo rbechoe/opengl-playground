@@ -8,6 +8,9 @@
 #include "stb_image.h"
 #include <shaders/shader.h> // is in include directory
 
+// settings
+float lightIntensity = 0.25;
+
 void loadFromFile(const char* url, char** target) {
     std::ifstream stream(url, std::ios::binary);
 
@@ -165,6 +168,7 @@ int main()
     glBindVertexArray(0);
     // END SETUP OBJECT
 
+
     // SHADER PROGRAM
     char* vertexSource;
     loadFromFile("vertex.shader", &vertexSource);
@@ -212,6 +216,7 @@ int main()
     int worldLoc = glGetUniformLocation(myProgram, "world");
     int viewLoc = glGetUniformLocation(myProgram, "view");
     int projLoc = glGetUniformLocation(myProgram, "projection");
+    float lightIntensityLoc = glGetUniformLocation(myProgram, "vLightIntensity");
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::rotate(world, glm::radians(45.0f), glm::vec3(0, 0, 1));
     world = glm::scale(world, glm::vec3(1, 1, 1));
@@ -251,6 +256,7 @@ int main()
         glUniformMatrix4fv(worldLoc, 1, GL_FALSE, glm::value_ptr(world));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform1f(lightIntensityLoc, lightIntensity);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);

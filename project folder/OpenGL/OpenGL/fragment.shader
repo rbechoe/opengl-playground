@@ -1,6 +1,7 @@
 #version 330 core
 out vec4 FragColor;
 
+in float lightIntensity;
 in vec3 color;
 in vec2 uv;
 in vec3 normal;
@@ -19,6 +20,6 @@ void main()
     vec3 lightReflect = normalize(reflect(-lightDir, normal));
     float specular = pow(max(dot(lightReflect, viewDirection), 0.0), 64);
 
-    float light = max(dot(-lightDir, normal), 0.25);
+    float light = max(dot(-lightDir, normal), lightIntensity);
     FragColor = diffuseColor * light + specular;
 }
