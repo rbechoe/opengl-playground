@@ -10,6 +10,7 @@
 
 // settings
 float lightIntensity = 0.25;
+float lightColor[] = { 1, 1, 1 };
 
 void loadFromFile(const char* url, char** target) {
     std::ifstream stream(url, std::ios::binary);
@@ -217,6 +218,7 @@ int main()
     int viewLoc = glGetUniformLocation(myProgram, "view");
     int projLoc = glGetUniformLocation(myProgram, "projection");
     float lightIntensityLoc = glGetUniformLocation(myProgram, "vLightIntensity");
+    float lightColorLoc = glGetUniformLocation(myProgram, "vLightColor");
     glm::mat4 world = glm::mat4(1.0f);
     world = glm::rotate(world, glm::radians(45.0f), glm::vec3(0, 0, 1));
     world = glm::scale(world, glm::vec3(1, 1, 1));
@@ -257,6 +259,7 @@ int main()
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
         glUniform1f(lightIntensityLoc, lightIntensity);
+        glUniform3fv(lightColorLoc, 3, lightColor);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
