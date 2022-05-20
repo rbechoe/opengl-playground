@@ -32,6 +32,12 @@
     <None Include="fragment.shader">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="fragmentSky.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="vertexSky.shader">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
@@ -41,6 +47,9 @@
       <Filter>Source Files</Filter>
     </Image>
     <Image Include="awesomeface.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="heightmap.png">
       <Filter>Source Files</Filter>
     </Image>
   </ItemGroup>

@@ -148,11 +148,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.shader" />
+    <None Include="fragmentSky.shader" />
     <None Include="vertex.shader" />
+    <None Include="vertexSky.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png" />
     <Image Include="container.jpg" />
+    <Image Include="heightmap.png" />
     <Image Include="wall.jpg" />
   </ItemGroup>
   <ItemGroup>

@@ -12,8 +12,7 @@ uniform sampler2D diffuse;
 
 void main() 
 {
-    // TODO debug light color, makes object black
-    vec4 diffuseColor = texture(diffuse, uv) * vec4(color, 1);// *vec4(lightColor, 1);
+    vec4 diffuseColor = texture(diffuse, uv) * vec4(color, 1) + vec4(lightColor, 1);
 
     vec3 lightDir = normalize(vec3(0, -1, -1));
     vec3 camPos = vec3(0, 3, -3);

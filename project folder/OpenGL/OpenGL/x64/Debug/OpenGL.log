@@ -1,7 +1,8 @@
 ﻿  OpenGL.cpp
-F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(19,15): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
-F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(220,29): warning C4244: 'initializing': conversion from 'GLint' to 'float', possible loss of data
-F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(221,25): warning C4244: 'initializing': conversion from 'GLint' to 'float', possible loss of data
-F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(261,21): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(262,22): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
-  OpenGL.vcxproj -> F:\HKU\Jaar 2\blok 4\kernmodule\opengl-playground\project folder\OpenGL\x64\Debug\OpenGL.exe
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(22,15): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(390,29): warning C4244: 'initializing': conversion from 'GLint' to 'float', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(391,25): warning C4244: 'initializing': conversion from 'GLint' to 'float', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(428,21): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(429,22): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  OpenGL.vcxproj -> C:\HKU\opengl\opengl-playground\project folder\OpenGL\x64\Debug\OpenGL.exe
