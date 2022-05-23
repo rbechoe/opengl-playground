@@ -155,11 +155,18 @@
   <ItemGroup>
     <Image Include="awesomeface.png" />
     <Image Include="container.jpg" />
+    <Image Include="dirt.jpg" />
+    <Image Include="grass.png" />
     <Image Include="heightmap.png" />
+    <Image Include="normalmap.png" />
+    <Image Include="rock.jpg" />
+    <Image Include="sand.jpg" />
+    <Image Include="snow.jpg" />
     <Image Include="wall.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
