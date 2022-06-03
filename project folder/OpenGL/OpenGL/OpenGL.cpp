@@ -4,7 +4,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <fstream>
+#include "model.h"
+#include "mesh.h"
 #include "stb_image.h"
 #include <shaders/shader.h> // is in include directory
 #include "utils.h"
@@ -13,6 +16,8 @@
 void RenderTerrain(glm::mat4 view, glm::mat4 projection);
 void RenderSkybox(glm::mat4 view, glm::mat4 projection);
 void SetupResources();
+void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, 
+                    float scale, glm::mat4 view, glm::mat4 projection);
 
 // settings
 float lightIntensity = 0.25;
@@ -23,12 +28,14 @@ float moveSpeed = 0.25;
 glm::vec3 sunColor(0.85, 0.55, 0.15);
 glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 1, 0);
 
-unsigned int plane, size, VAO, VBO, EBO, cubeSize;
-unsigned int skyProgram, myProgram;
+unsigned int plane, planeSize, VAO, VBO, EBO, cubeSize;
+unsigned int skyProgram, myProgram, modelProgram;
 unsigned int diffuseTex, heightmapID, normalmapID, dirtID, sandID, grassID, rockID, snowID;
 int lightIntensityLoc;
 int lightColorLoc;
 int width = 1280, height = 720;
+
+Model* backpack;
 
 void handleInput(GLFWwindow* window, float deltaTime) {
     static bool w, s, a, d, space, ctrl, shift;
@@ -130,11 +137,9 @@ int main()
     lightColorLoc = glGetUniformLocation(myProgram, "vLightColor");
     // END MATRIX SETUP
 
-
     // OPENGL SETTINGS
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-
 
     while (!glfwWindowShouldClose(window))
     {
@@ -153,6 +158,8 @@ int main()
         // render
         RenderSkybox(view, projection);
         RenderTerrain(view, projection);
+        RenderModel(backpack, modelProgram, glm::vec3(50, 50, 50), glm::vec3(0, t, 0), 10, view, projection);
+        // std::cout << glGetError() << std::endl;
 
         // clean up data or something idk
         glfwSwapBuffers(window);
@@ -229,11 +236,15 @@ void RenderTerrain(glm::mat4 view, glm::mat4 projection)
     glBindTexture(GL_TEXTURE_2D, snowID);
 
     glBindVertexArray(plane);
-    glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, planeSize, GL_UNSIGNED_INT, 0);
 }
 
 void SetupResources()
 {
+    stbi_set_flip_vertically_on_load(true);
+
+    backpack = new Model("assets/backpack/backpack.obj");
+
     // Vertices of our triangle!
     // need 24 vertices for normal/uv-mapped Cube
     float vertices[] = {
@@ -321,7 +332,7 @@ void SetupResources()
     // END SETUP OBJECT
 
     heightmapID;
-    plane = GeneratePlane("heightmap.png", GL_RGBA, 4, 1.0f, 1.0f, size, heightmapID);
+    plane = GeneratePlane("heightmap.png", GL_RGBA, 4, 1.0f, 1.0f, planeSize, heightmapID);
 
     // terrain textures
     diffuseTex = loadTexture("wall.jpg", GL_RGB, 3);
@@ -333,7 +344,6 @@ void SetupResources()
     snowID = loadTexture("snow.jpg", GL_RGB, 3);
 
     // SHADER PROGRAM
-    stbi_set_flip_vertically_on_load(true);
 
     unsigned int vertShader, fragShader;
     CreateShader("vertex.shader", GL_VERTEX_SHADER, vertShader);
@@ -342,6 +352,10 @@ void SetupResources()
     unsigned int vertSky, fragSky;
     CreateShader("vertexSky.shader", GL_VERTEX_SHADER, vertSky);
     CreateShader("fragmentSky.shader", GL_FRAGMENT_SHADER, fragSky);
+
+    unsigned int vertModel, fragModel;
+    CreateShader("vertModel.shader", GL_VERTEX_SHADER, vertModel);
+    CreateShader("fragModel.shader", GL_FRAGMENT_SHADER, fragModel);
 
     myProgram = glCreateProgram();
     glAttachShader(myProgram, vertShader);
@@ -353,10 +367,17 @@ void SetupResources()
     glAttachShader(skyProgram, fragSky);
     glLinkProgram(skyProgram);
 
+    modelProgram = glCreateProgram();
+    glAttachShader(modelProgram, vertModel);
+    glAttachShader(modelProgram, fragModel);
+    glLinkProgram(modelProgram);
+
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
     glDeleteShader(vertSky);
     glDeleteShader(fragSky);
+    glDeleteShader(fragModel);
+    glDeleteShader(vertModel);
     // END SHADER PROGRAM
 
     glUseProgram(myProgram);
@@ -368,4 +389,32 @@ void SetupResources()
     glUniform1i(glGetUniformLocation(myProgram, "grass"), 4);
     glUniform1i(glGetUniformLocation(myProgram, "rock"), 5);
     glUniform1i(glGetUniformLocation(myProgram, "snow"), 6);
+}
+
+void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, float scale, glm::mat4 view, glm::mat4 projection)
+{
+    // shader
+    glUseProgram(shader);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BACK);
+
+    // world matrix
+    glm::mat4 world = glm::mat4(1);
+    world = glm::translate(world, position);
+    world = glm::scale(world, glm::vec3(scale));
+    glm::quat q(rotation);
+    world = world * glm::toMat4(q);
+
+    // setup shader
+    glUniformMatrix4fv(glGetUniformLocation(modelProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
+    glUniformMatrix4fv(glGetUniformLocation(modelProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(modelProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform3fv(glGetUniformLocation(modelProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
+    // sun
+    float t = glfwGetTime();
+    glUniform3f(glGetUniformLocation(skyProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
+
+    model->Draw(shader);
 }

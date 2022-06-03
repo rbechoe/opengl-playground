@@ -9,7 +9,13 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Assets">
+      <UniqueIdentifier>{f4ab48dd-8016-4a7a-9662-dd8c493964b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Backpack">
+      <UniqueIdentifier>{a875b967-4d4f-4eaf-8363-15cd387a0eff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
@@ -22,7 +28,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,37 +44,61 @@
     <None Include="vertexSky.shader">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="assets\backpack\backpack.mtl">
+      <Filter>Assets\Backpack</Filter>
+    </None>
+    <None Include="fragModel.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="vertModel.shader">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="sand.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="snow.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="dirt.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="grass.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="rock.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="container.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="awesomeface.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="heightmap.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="normalmap.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
     </Image>
     <Image Include="wall.jpg">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Resource Files</Filter>
+    </Image>
+    <Image Include="assets\backpack\ao.jpg">
+      <Filter>Assets\Backpack</Filter>
+    </Image>
+    <Image Include="assets\backpack\diffuse.jpg">
+      <Filter>Assets\Backpack</Filter>
+    </Image>
+    <Image Include="assets\backpack\normal.png">
+      <Filter>Assets\Backpack</Filter>
+    </Image>
+    <Image Include="assets\backpack\roughness.jpg">
+      <Filter>Assets\Backpack</Filter>
+    </Image>
+    <Image Include="assets\backpack\specular.jpg">
+      <Filter>Assets\Backpack</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -78,5 +108,16 @@
     <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\backpack\source_attribution.txt">
+      <Filter>Assets\Backpack</Filter>
+    </Text>
   </ItemGroup>
 </Project>
