@@ -21,7 +21,6 @@ float lerp(float a, float b, float t) {
 void main()
 {
     vec3 lightDir = normalize(lightDirection);
-    //vec3 lightDir = normalize(vec3(-1, -0.5, -1));
     
     vec4 diffuse = texture(texture_diffuse1, TexCoords);
     vec4 specTex = texture(texture_specular1, TexCoords);

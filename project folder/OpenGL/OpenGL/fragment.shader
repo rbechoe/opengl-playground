@@ -47,12 +47,4 @@ void main()
     vec3 bot = vec3(188 / 255.0, 214 / 255.0, 231 / 255.0);
 
     FragColor = vec4(lerp(diffuse * light, bot, fogAmount), 1.0);
-
-    /*vec3 camPos = vec3(0, 3, -3);
-    vec3 viewDirection = normalize(worldPixel.xyz - camPos);
-
-    vec3 lightReflect = normalize(reflect(-lightDir, normal));
-    float specular = pow(max(dot(lightReflect, viewDirection), 0.0), 64);
-
-    float light = max(dot(-lightDir, normal), lightIntensity);*/
 }

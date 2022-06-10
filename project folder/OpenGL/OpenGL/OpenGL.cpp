@@ -72,7 +72,6 @@ void handleInput(GLFWwindow* window, float deltaTime) {
 
     glm::vec2 mouseDelta(cursorX - lastCursorX, cursorY - lastCursorY);
 
-    // TODO: calculate rotation & movement
     yaw -= mouseDelta.x * sensitivity;
     pitch += mouseDelta.y * sensitivity;
 
@@ -158,7 +157,21 @@ int main()
         // render
         RenderSkybox(view, projection);
         RenderTerrain(view, projection);
-        RenderModel(backpack, modelProgram, glm::vec3(50, 50, 50), glm::vec3(0, t, 0), 10, view, projection);
+        for (int x = 0; x < 10; x++)
+        {
+            for (int z = 0; z < 10; z++)
+            {
+                // get world pixel and use it to place model at position of grass
+                // worldPixel = world * vec4(vPos, 1.0);
+                // if the worldpixel.y position - 40 in a range of 10 is, place tree?
+
+                // spawn trees on grid 10x10
+                // tree gets world location
+                // tree fragment gets world pixel that decides where to spawn based on world pixel
+                // too high or low results in drawing way out of bounds
+                RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
+            }
+        }
         // std::cout << glGetError() << std::endl;
 
         // clean up data or something idk
@@ -344,7 +357,6 @@ void SetupResources()
     snowID = loadTexture("snow.jpg", GL_RGB, 3);
 
     // SHADER PROGRAM
-
     unsigned int vertShader, fragShader;
     CreateShader("vertex.shader", GL_VERTEX_SHADER, vertShader);
     CreateShader("fragment.shader", GL_FRAGMENT_SHADER, fragShader);
@@ -407,6 +419,8 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     glm::quat q(rotation);
     world = world * glm::toMat4(q);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, heightmapID);
     // setup shader
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -414,7 +428,7 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     glUniform3fv(glGetUniformLocation(modelProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
     // sun
     float t = glfwGetTime();
-    glUniform3f(glGetUniformLocation(skyProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
+    glUniform3f(glGetUniformLocation(modelProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
 
     model->Draw(shader);
 }

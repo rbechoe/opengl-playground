@@ -29,7 +29,4 @@ void main()
 	color = vColor;
 	uv = vUV;
 	normal = mat3(world) * vNormal;
-
-	//lightColor = vLightColor;
-	//lightIntensity = vLightIntensity;
 }

@@ -2,6 +2,7 @@
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoords;
+layout(location = 3) in vec2 vUV;
 
 out vec2 TexCoords;
 out vec3 Normals;
@@ -11,10 +12,23 @@ uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform sampler2D heightmap;
+
 void main()
 {
+    // experimenting -> worldpixel based stuff
+    //worldPixel = world * vec4(vPos, 1.0);
+    //vec4 diffuseColor = texture(heightmap, vUV);
+    //worldPixel.y += diffuseColor.r * 100;
+    //gl_Position = projection * view * worldPixel;
+
+    // good working stuff
     TexCoords = aTexCoords;
     FragPos = world * vec4(aPos, 1.0);
+
+    vec4 diffuseColor = texture(heightmap, vUV);
+    FragPos.y += diffuseColor.r * 100;
+
     gl_Position = projection * view * FragPos;
 
     // not the most efficient, but it works
