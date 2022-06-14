@@ -16,18 +16,12 @@ uniform sampler2D heightmap;
 
 void main()
 {
-    // experimenting -> worldpixel based stuff
-    //worldPixel = world * vec4(vPos, 1.0);
-    //vec4 diffuseColor = texture(heightmap, vUV);
-    //worldPixel.y += diffuseColor.r * 100;
-    //gl_Position = projection * view * worldPixel;
-
     // good working stuff
     TexCoords = aTexCoords;
     FragPos = world * vec4(aPos, 1.0);
 
-    vec4 diffuseColor = texture(heightmap, vUV);
-    FragPos.y += diffuseColor.r * 100;
+    //vec4 diffuseColor = texture(heightmap, vUV);
+    //FragPos.y += diffuseColor.r * 100;
 
     gl_Position = projection * view * FragPos;
 

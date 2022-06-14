@@ -157,18 +157,11 @@ int main()
         // render
         RenderSkybox(view, projection);
         RenderTerrain(view, projection);
-        for (int x = 0; x < 10; x++)
+        for (int x = 0; x < 3; x++)
         {
-            for (int z = 0; z < 10; z++)
+            // plane has data about the height in the array 
+            for (int z = 0; z < 3; z++)
             {
-                // get world pixel and use it to place model at position of grass
-                // worldPixel = world * vec4(vPos, 1.0);
-                // if the worldpixel.y position - 40 in a range of 10 is, place tree?
-
-                // spawn trees on grid 10x10
-                // tree gets world location
-                // tree fragment gets world pixel that decides where to spawn based on world pixel
-                // too high or low results in drawing way out of bounds
                 RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
             }
         }
