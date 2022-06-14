@@ -7,10 +7,13 @@ in vec3 normal;
 in vec4 worldPixel;
 
 uniform sampler2D diffuse;
+uniform sampler2D diffuse2;
 
 void main() 
 {
-    vec4 diffuseColor = texture(diffuse, uv);
+    vec4 colA = texture(diffuse, uv);
+    vec4 colB = texture(diffuse2, uv);
+    vec4 diffuseColor = mix(colA, colB, 0.5);
 
     vec3 lightDir = normalize(vec3(0, -1, -1));
     vec3 camPos = vec3(0, 3, -3);

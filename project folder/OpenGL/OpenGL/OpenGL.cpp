@@ -174,6 +174,7 @@ int main()
 
     // textures
     unsigned int diffuseTex = loadTexture("wall.jpg", GL_RGB);
+    unsigned int diffuseTex2 = loadTexture("awesomeface.png", GL_RGBA);
 
     unsigned int vertID, fragID;
     vertID = glCreateShader(GL_VERTEX_SHADER);
@@ -213,6 +214,11 @@ int main()
     int viewLoc = glGetUniformLocation(myProgram, "view");
     int projLoc = glGetUniformLocation(myProgram, "projection");
     glm::mat4 world = glm::mat4(1.0f);
+
+    // set textures
+    glUniform1i(glGetUniformLocation(myProgram, "diffuse"), 0); 
+    glUniform1i(glGetUniformLocation(myProgram, "diffuse2"), 1);
+
     world = glm::rotate(world, glm::radians(45.0f), glm::vec3(0, 0, 1));
     world = glm::scale(world, glm::vec3(1, 1, 1));
     world = glm::translate(world, glm::vec3(0, 1, 0));
@@ -239,6 +245,8 @@ int main()
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseTex);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, diffuseTex2);
 
         glm::mat4 world = glm::mat4(1.0f);
         world = glm::rotate(world, glm::radians((float)t * 45.0f), glm::vec3(0, 0, 1));
