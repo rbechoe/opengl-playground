@@ -24,6 +24,7 @@ float lightIntensity = 0.25;
 float lightColor[] = { 1, 1, 1 };
 int sunSize = 128;
 int posX = 0, posY = 200, posZ = 0;
+int samples = 4; // used for msaa
 float moveSpeed = 0.25;
 glm::vec3 sunColor(0.85, 0.55, 0.15);
 glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 1, 0);
@@ -104,6 +105,7 @@ int main()
     std::cout << "Konichiwa World!\n";
 
     glfwInit();
+    glfwWindowHint(GLFW_SAMPLES, samples); // used for MSAA
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -139,6 +141,7 @@ int main()
     // OPENGL SETTINGS
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -159,7 +162,6 @@ int main()
         RenderTerrain(view, projection);
         for (int x = 0; x < 3; x++)
         {
-            // plane has data about the height in the array 
             for (int z = 0; z < 3; z++)
             {
                 RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
@@ -240,6 +242,11 @@ void RenderTerrain(glm::mat4 view, glm::mat4 projection)
     glBindTexture(GL_TEXTURE_2D, rockID);
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_2D, snowID);
+
+    // multisample logic
+    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, dirtID);
+    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, dirtID, 0);
 
     glBindVertexArray(plane);
     glDrawElements(GL_TRIANGLES, planeSize, GL_UNSIGNED_INT, 0);
@@ -412,8 +419,6 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     glm::quat q(rotation);
     world = world * glm::toMat4(q);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, heightmapID);
     // setup shader
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));

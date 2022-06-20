@@ -12,19 +12,14 @@ uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform sampler2D heightmap;
-
 void main()
 {
     // good working stuff
     TexCoords = aTexCoords;
     FragPos = world * vec4(aPos, 1.0);
 
-    //vec4 diffuseColor = texture(heightmap, vUV);
-    //FragPos.y += diffuseColor.r * 100;
-
     gl_Position = projection * view * FragPos;
 
     // not the most efficient, but it works
-    Normals = normalize( mat3(inverse(transpose(world)))* aNormal );
+    Normals = normalize(mat3(inverse(transpose(world))) * aNormal);
 }
