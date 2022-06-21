@@ -18,6 +18,9 @@ void RenderSkybox(glm::mat4 view, glm::mat4 projection);
 void SetupResources();
 void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, 
                     float scale, glm::mat4 view, glm::mat4 projection);
+void CreateFrameBuffer(int width, int height, unsigned int& frameBufferID, unsigned int& colorBufferID, unsigned int& depthBufferID);
+void RenderToBuffer(unsigned int frameBufferTo, unsigned int colorBufferFrom, unsigned int shader);
+void RenderQuad();
 
 // settings
 float lightIntensity = 0.25;
@@ -30,7 +33,7 @@ glm::vec3 sunColor(0.85, 0.55, 0.15);
 glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 1, 0);
 
 unsigned int plane, planeSize, VAO, VBO, EBO, cubeSize;
-unsigned int skyProgram, myProgram, modelProgram;
+unsigned int skyProgram, myProgram, modelProgram, blitProgram, chromProgram, bloomProgram;
 unsigned int diffuseTex, heightmapID, normalmapID, dirtID, sandID, grassID, rockID, snowID;
 int lightIntensityLoc;
 int lightColorLoc;
@@ -129,6 +132,14 @@ int main()
 
     SetupResources();
 
+    // BUFFER SETUP
+    unsigned int frameBuf1, frameBuf2, frameBuf3;
+    unsigned int colorBuf1, colorBuf2, colorBuf3;
+    unsigned int depthBuf1, depthBuf2, depthBuf3;
+    CreateFrameBuffer(width, height, frameBuf1, colorBuf1, depthBuf1);
+    CreateFrameBuffer(width, height, frameBuf2, colorBuf2, depthBuf2);
+    CreateFrameBuffer(width, height, frameBuf3, colorBuf3, depthBuf3);
+
     // MATRIX SETUP
     glUseProgram(myProgram);
     int worldLoc = glGetUniformLocation(myProgram, "world");
@@ -143,6 +154,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
+    glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraForward, cameraUp);
+    glm::mat4 projection = glm::perspective(glm::radians(65.0f), width / (float)height, 0.1f, 1000.0f);
+
     while (!glfwWindowShouldClose(window))
     {
         double t = glfwGetTime();
@@ -150,24 +164,32 @@ int main()
         handleInput(window, (float)(t - previousT));
         previousT = t;
 
-        glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraForward, cameraUp);
-        glm::mat4 projection = glm::perspective(glm::radians(65.0f), width / (float)height, 0.1f, 1000.0f);
+        view = glm::lookAt(cameraPosition, cameraPosition + cameraForward, cameraUp);
 
-        // clean screen
-        glClearColor(1, 1, 1, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuf1);
 
-        // render
-        RenderSkybox(view, projection);
-        RenderTerrain(view, projection);
-        for (int x = 0; x < 3; x++)
-        {
-            for (int z = 0; z < 3; z++)
+            // clean screen
+            glClearColor(0, 0, 0, 1.0f);
+            glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+            // render
+            RenderSkybox(view, projection);
+            RenderTerrain(view, projection);
+            for (int x = 0; x < 3; x++)
             {
-                RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
+                for (int z = 0; z < 3; z++)
+                {
+                    RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
+                }
             }
-        }
-        // std::cout << glGetError() << std::endl;
+            // std::cout << glGetError() << std::endl;
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // Post Processing
+        RenderToBuffer(frameBuf2, colorBuf1, chromProgram);
+        RenderToBuffer(frameBuf3, colorBuf2, bloomProgram);
+        RenderToBuffer(0, colorBuf3, blitProgram);
 
         // clean up data or something idk
         glfwSwapBuffers(window);
@@ -369,6 +391,12 @@ void SetupResources()
     CreateShader("vertModel.shader", GL_VERTEX_SHADER, vertModel);
     CreateShader("fragModel.shader", GL_FRAGMENT_SHADER, fragModel);
 
+    unsigned int vertImg, fragImg, chromImg, bloomImg;
+    CreateShader("vertimg.shader", GL_VERTEX_SHADER, vertImg);
+    CreateShader("fragimg.shader", GL_FRAGMENT_SHADER, fragImg);
+    CreateShader("chrom.shader", GL_FRAGMENT_SHADER, chromImg);
+    CreateShader("bloom.shader", GL_FRAGMENT_SHADER, bloomImg);
+
     myProgram = glCreateProgram();
     glAttachShader(myProgram, vertShader);
     glAttachShader(myProgram, fragShader);
@@ -384,12 +412,31 @@ void SetupResources()
     glAttachShader(modelProgram, fragModel);
     glLinkProgram(modelProgram);
 
+    blitProgram = glCreateProgram();
+    glAttachShader(blitProgram, vertImg);
+    glAttachShader(blitProgram, fragImg);
+    glLinkProgram(blitProgram);
+
+    chromProgram = glCreateProgram();
+    glAttachShader(chromProgram, vertImg);
+    glAttachShader(chromProgram, chromImg);
+    glLinkProgram(chromProgram);
+
+    bloomProgram = glCreateProgram();
+    glAttachShader(bloomProgram, vertImg);
+    glAttachShader(bloomProgram, bloomImg);
+    glLinkProgram(bloomProgram);
+
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
     glDeleteShader(vertSky);
     glDeleteShader(fragSky);
     glDeleteShader(fragModel);
     glDeleteShader(vertModel);
+    glDeleteShader(fragImg);
+    glDeleteShader(vertImg);
+    glDeleteShader(chromImg);
+    glDeleteShader(bloomImg);
     // END SHADER PROGRAM
 
     glUseProgram(myProgram);
@@ -429,4 +476,80 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     glUniform3f(glGetUniformLocation(modelProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
 
     model->Draw(shader);
+}
+
+void CreateFrameBuffer(int width, int height, unsigned int &frameBufferID, unsigned int &colorBufferID, unsigned int &depthBufferID)
+{
+    // frame buffer
+    glGenFramebuffers(1, &frameBufferID);
+
+    // color buffer
+    glGenTextures(1, &colorBufferID);
+    glBindTexture(GL_TEXTURE_2D, colorBufferID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+    // depth buffer
+    glGenRenderbuffers(1, &depthBufferID);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+
+    // attach buffers
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferID, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cout << "Framebuffer not complete!" << std::endl;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderToBuffer(unsigned int frameBufferTo, unsigned int colorBufferFrom, unsigned int shader)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferTo);
+
+    glUseProgram(shader);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, colorBufferFrom);
+
+    RenderQuad();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void RenderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float quadVertices[] = {
+            // positions        // uvs
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f
+        };
+
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }

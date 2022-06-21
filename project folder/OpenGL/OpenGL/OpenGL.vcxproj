@@ -148,11 +148,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\backpack\backpack.mtl" />
+    <None Include="bloom.shader" />
+    <None Include="chrom.shader" />
+    <None Include="fragimg.shader" />
     <None Include="fragment.shader" />
     <None Include="fragmentSky.shader" />
     <None Include="fragModel.shader" />
     <None Include="vertex.shader" />
     <None Include="vertexSky.shader" />
+    <None Include="vertimg.shader" />
     <None Include="vertModel.shader" />
   </ItemGroup>
   <ItemGroup>

@@ -53,6 +53,18 @@
     <None Include="vertModel.shader">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="vertimg.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="fragimg.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="chrom.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="bloom.shader">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="sand.jpg">
