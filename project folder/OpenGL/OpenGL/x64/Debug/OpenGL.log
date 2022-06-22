@@ -2,6 +2,6 @@
 C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\utils.h(7,15): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
 C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(250,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(272,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(515,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(709,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(519,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\HKU\opengl\opengl-playground\project folder\OpenGL\OpenGL\OpenGL.cpp(714,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   OpenGL.vcxproj -> C:\HKU\opengl\opengl-playground\project folder\OpenGL\x64\Debug\OpenGL.exe

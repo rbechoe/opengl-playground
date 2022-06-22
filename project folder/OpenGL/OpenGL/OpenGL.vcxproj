@@ -177,6 +177,7 @@
     <Image Include="sand.jpg" />
     <Image Include="snow.jpg" />
     <Image Include="wall.jpg" />
+    <Image Include="water_normal.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mesh.h" />

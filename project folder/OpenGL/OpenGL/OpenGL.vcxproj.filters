@@ -118,6 +118,9 @@
     <Image Include="assets\backpack\specular.jpg">
       <Filter>Assets\Backpack</Filter>
     </Image>
+    <Image Include="water_normal.jpg">
+      <Filter>Assets\Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">

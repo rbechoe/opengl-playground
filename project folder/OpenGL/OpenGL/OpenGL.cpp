@@ -48,7 +48,7 @@ glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 
 
 unsigned int plane, planeSize, VAO, VBO, EBO, cubeSize;
 unsigned int skyProgram, terrainProgram, modelProgram, blitProgram, chromProgram, bloomProgram, waterProgram;
-unsigned int diffuseTex, heightmapID, normalmapID, dirtID, sandID, grassID, rockID, snowID;
+unsigned int diffuseTex, heightmapID, normalmapID, dirtID, sandID, grassID, rockID, snowID, waternormalID;
 int lightIntensityLoc;
 int lightColorLoc;
 int width = 1280, height = 720;
@@ -399,6 +399,9 @@ void SetupResources()
     rockID = loadTexture("rock.jpg", GL_RGB, 3);
     snowID = loadTexture("snow.jpg", GL_RGB, 3);
 
+    // water textures
+    waternormalID = loadTexture("water_normal.jpg", GL_RGB, 3);
+
     // SHADER PROGRAMS
     unsigned int vertShader, fragShader;
     CreateShader("vertex.shader", GL_VERTEX_SHADER, vertShader);
@@ -487,6 +490,7 @@ void SetupResources()
     glUniform1i(glGetUniformLocation(waterProgram, "SceneColor"), 0);
     glUniform1i(glGetUniformLocation(waterProgram, "SceneDepth"), 1);
     glUniform1i(glGetUniformLocation(waterProgram, "InvertedScene"), 2);
+    glUniform1i(glGetUniformLocation(waterProgram, "NormalMap"), 3);
 }
 
 void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, float scale, glm::mat4 view, glm::mat4 projection)
@@ -578,7 +582,12 @@ void CreateSceneBuffer(int width, int height, unsigned int &frameBufferID, unsig
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    // depth buffer - used for MSAA logic
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_RED);
+
+    // depth buffer - used for MSAA logic as well
     unsigned int textureColorBufferMultiSampled;
     glGenTextures(1, &textureColorBufferMultiSampled);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
@@ -702,13 +711,14 @@ void RenderWaterPlane(glm::mat4 view, glm::mat4 projection, MyFrameBuffer invert
     world = glm::translate(world, glm::vec3(0, 0, 0));
 
     // settings
+    float t = glfwGetTime();
     glUniformMatrix4fv(glGetUniformLocation(waterProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
     glUniformMatrix4fv(glGetUniformLocation(waterProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(waterProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3fv(glGetUniformLocation(waterProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
-    float t = glfwGetTime();
     glUniform3f(glGetUniformLocation(waterProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
     glUniform1f(glGetUniformLocation(waterProgram, "waterHeight"), WATER_HEIGHT);
+    glUniform1f(glGetUniformLocation(waterProgram, "time"), t);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, scene.color1);
@@ -716,6 +726,8 @@ void RenderWaterPlane(glm::mat4 view, glm::mat4 projection, MyFrameBuffer invert
     glBindTexture(GL_TEXTURE_2D, scene.color2);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, invertSource.color1);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, waternormalID);
 
     // render plane
     glBindVertexArray(plane);
