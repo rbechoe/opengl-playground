@@ -12,6 +12,16 @@
 #include <shaders/shader.h> // is in include directory
 #include "utils.h"
 
+struct MyFrameBuffer
+{
+    unsigned int ID = 0;
+    unsigned int color1 = 0, color2 = 0, depth = 0;
+
+    MyFrameBuffer() {}
+};
+
+MyFrameBuffer screenBuffer;
+
 // forward declarations
 void RenderTerrain(glm::mat4 view, glm::mat4 projection);
 void RenderSkybox(glm::mat4 view, glm::mat4 projection);
@@ -19,7 +29,8 @@ void SetupResources();
 void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, 
                     float scale, glm::mat4 view, glm::mat4 projection);
 void CreateFrameBuffer(int width, int height, unsigned int& frameBufferID, unsigned int& colorBufferID, unsigned int& depthBufferID);
-void RenderToBuffer(unsigned int frameBufferTo, unsigned int colorBufferFrom, unsigned int shader);
+void CreateSceneBuffer(int width, int height, unsigned int& frameBufferID, unsigned int& colorBufferID, unsigned int& colorBufferID2, unsigned int& depthBufferID);
+void RenderToBuffer(MyFrameBuffer to, MyFrameBuffer from, unsigned int shader);
 void RenderQuad();
 
 // settings
@@ -27,7 +38,6 @@ float lightIntensity = 0.25;
 float lightColor[] = { 1, 1, 1 };
 int sunSize = 128;
 int posX = 0, posY = 200, posZ = 0;
-int samples = 4; // used for msaa
 float moveSpeed = 0.25;
 glm::vec3 sunColor(0.85, 0.55, 0.15);
 glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 1, 0);
@@ -40,6 +50,8 @@ int lightColorLoc;
 int width = 1280, height = 720;
 
 Model* backpack;
+
+MyFrameBuffer post1, post2, post3, scene;
 
 void handleInput(GLFWwindow* window, float deltaTime) {
     static bool w, s, a, d, space, ctrl, shift;
@@ -135,12 +147,10 @@ int main()
     SetupResources();
 
     // BUFFER SETUP
-    unsigned int frameBuf1, frameBuf2, frameBuf3;
-    unsigned int colorBuf1, colorBuf2, colorBuf3;
-    unsigned int depthBuf1, depthBuf2, depthBuf3;
-    CreateFrameBuffer(width, height, frameBuf1, colorBuf1, depthBuf1);
-    CreateFrameBuffer(width, height, frameBuf2, colorBuf2, depthBuf2);
-    CreateFrameBuffer(width, height, frameBuf3, colorBuf3, depthBuf3);
+    CreateFrameBuffer(width, height, post1.ID, post1.color1, post1.depth);
+    CreateFrameBuffer(width, height, post2.ID, post2.color1, post2.depth);
+    CreateFrameBuffer(width, height, post3.ID, post3.color1, post3.depth);
+    CreateSceneBuffer(width, height, scene.ID, scene.color1, scene.color2, scene.depth);
 
     // MATRIX SETUP
     glUseProgram(myProgram);
@@ -168,32 +178,32 @@ int main()
 
         view = glm::lookAt(cameraPosition, cameraPosition + cameraForward, cameraUp);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuf1);
+        glBindFramebuffer(GL_FRAMEBUFFER, post1.ID);
 
-            // clean screen
-            glClearColor(0, 0, 0, 1.0f);
-            glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        // clean screen
+        glClearColor(0, 0, 0, 1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-            // render
-            RenderSkybox(view, projection);
-            RenderTerrain(view, projection);
-            for (int x = 0; x < 3; x++)
+        // render
+        RenderSkybox(view, projection);
+        RenderTerrain(view, projection);
+        for (int x = 0; x < 3; x++)
+        {
+            for (int z = 0; z < 3; z++)
             {
-                for (int z = 0; z < 3; z++)
-                {
-                    RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
-                }
+                RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
             }
-            // std::cout << glGetError() << std::endl;
+        }
+        // std::cout << glGetError() << std::endl;
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Post Processing
-        RenderToBuffer(frameBuf2, colorBuf1, chromProgram);
-        RenderToBuffer(frameBuf3, colorBuf2, bloomProgram);
-        RenderToBuffer(0, colorBuf3, blitProgram);
+        RenderToBuffer(post2, post1, chromProgram);
+        RenderToBuffer(post3, post2, bloomProgram);
+        RenderToBuffer(post1, post3, blitProgram);
+        RenderToBuffer(screenBuffer, post1, blitProgram);
 
-        // clean up data or something idk
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -277,7 +287,6 @@ void SetupResources()
 
     backpack = new Model("assets/backpack/backpack.obj");
 
-    // Vertices of our triangle!
     // need 24 vertices for normal/uv-mapped Cube
     float vertices[] = {
         // positions            //colors            // tex coords   // normals
@@ -375,7 +384,7 @@ void SetupResources()
     rockID = loadTexture("rock.jpg", GL_RGB, 3);
     snowID = loadTexture("snow.jpg", GL_RGB, 3);
 
-    // SHADER PROGRAM
+    // SHADER PROGRAMS
     unsigned int vertShader, fragShader;
     CreateShader("vertex.shader", GL_VERTEX_SHADER, vertShader);
     CreateShader("fragment.shader", GL_FRAGMENT_SHADER, fragShader);
@@ -388,11 +397,13 @@ void SetupResources()
     CreateShader("vertModel.shader", GL_VERTEX_SHADER, vertModel);
     CreateShader("fragModel.shader", GL_FRAGMENT_SHADER, fragModel);
 
-    unsigned int vertImg, fragImg, chromImg, bloomImg;
+    unsigned int vertImg, fragImg;
     CreateShader("vertimg.shader", GL_VERTEX_SHADER, vertImg);
     CreateShader("fragimg.shader", GL_FRAGMENT_SHADER, fragImg);
-    CreateShader("chrom.shader", GL_FRAGMENT_SHADER, chromImg);
-    CreateShader("bloom.shader", GL_FRAGMENT_SHADER, bloomImg);
+
+    unsigned int chrom, bloom;
+    CreateShader("chrom.shader", GL_FRAGMENT_SHADER, chrom);
+    CreateShader("bloom.shader", GL_FRAGMENT_SHADER, bloom);
 
     myProgram = glCreateProgram();
     glAttachShader(myProgram, vertShader);
@@ -416,12 +427,12 @@ void SetupResources()
 
     chromProgram = glCreateProgram();
     glAttachShader(chromProgram, vertImg);
-    glAttachShader(chromProgram, chromImg);
+    glAttachShader(chromProgram, chrom);
     glLinkProgram(chromProgram);
 
     bloomProgram = glCreateProgram();
     glAttachShader(bloomProgram, vertImg);
-    glAttachShader(bloomProgram, bloomImg);
+    glAttachShader(bloomProgram, bloom);
     glLinkProgram(bloomProgram);
 
     glDeleteShader(vertShader);
@@ -432,14 +443,14 @@ void SetupResources()
     glDeleteShader(vertModel);
     glDeleteShader(fragImg);
     glDeleteShader(vertImg);
-    glDeleteShader(chromImg);
-    glDeleteShader(bloomImg);
+    glDeleteShader(chrom);
+    glDeleteShader(bloom);
     // END SHADER PROGRAM
 
+    // set terrain textures
     glUseProgram(myProgram);
     glUniform1i(glGetUniformLocation(myProgram, "heightmap"), 0);
     glUniform1i(glGetUniformLocation(myProgram, "normalmap"), 1);
-
     glUniform1i(glGetUniformLocation(myProgram, "dirt"), 2);
     glUniform1i(glGetUniformLocation(myProgram, "sand"), 3);
     glUniform1i(glGetUniformLocation(myProgram, "grass"), 4);
@@ -468,6 +479,7 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(modelProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3fv(glGetUniformLocation(modelProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
+
     // sun
     float t = glfwGetTime();
     glUniform3f(glGetUniformLocation(modelProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
@@ -475,7 +487,7 @@ void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec
     model->Draw(shader);
 }
 
-void CreateFrameBuffer(int width, int height, unsigned int &frameBufferID, unsigned int &colorBufferID, unsigned int &depthBufferID)
+void CreateFrameBuffer(int width, int height, unsigned int& frameBufferID, unsigned int& colorBufferID, unsigned int& depthBufferID)
 {
     // frame buffer
     glGenFramebuffers(1, &frameBufferID);
@@ -484,7 +496,7 @@ void CreateFrameBuffer(int width, int height, unsigned int &frameBufferID, unsig
     glGenTextures(1, &colorBufferID);
     glBindTexture(GL_TEXTURE_2D, colorBufferID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -514,9 +526,57 @@ void CreateFrameBuffer(int width, int height, unsigned int &frameBufferID, unsig
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void RenderToBuffer(unsigned int frameBufferTo, unsigned int colorBufferFrom, unsigned int shader)
+void CreateSceneBuffer(int width, int height, unsigned int &frameBufferID, unsigned int &colorBufferID, unsigned int& colorBufferID2, unsigned int &depthBufferID)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferTo);
+    // frame buffer
+    glGenFramebuffers(1, &frameBufferID);
+
+    // color buffer
+    glGenTextures(1, &colorBufferID);
+    glBindTexture(GL_TEXTURE_2D, colorBufferID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // color buffer
+    glGenTextures(1, &colorBufferID2);
+    glBindTexture(GL_TEXTURE_2D, colorBufferID2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // depth buffer - used for MSAA logic
+    unsigned int textureColorBufferMultiSampled;
+    glGenTextures(1, &textureColorBufferMultiSampled);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
+    glTexImage2DMultisample(GL_PROXY_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, width, height, GL_TRUE);
+    glBindTexture(GL_PROXY_TEXTURE_2D_MULTISAMPLE, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled, 0);
+
+    glGenRenderbuffers(1, &depthBufferID);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    // attach buffers
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferID, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, colorBufferID2, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cout << "Framebuffer not complete!" << std::endl;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderToBuffer(MyFrameBuffer to, MyFrameBuffer from, unsigned int shader)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, to.ID);
 
     glUseProgram(shader);
 
@@ -524,7 +584,7 @@ void RenderToBuffer(unsigned int frameBufferTo, unsigned int colorBufferFrom, un
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, colorBufferFrom);
+    glBindTexture(GL_TEXTURE_2D, from.color1);
 
     RenderQuad();
 
@@ -555,6 +615,7 @@ void RenderQuad()
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     }
+
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
