@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 DepthColor;
 
 in vec4 worldPixel;
 
@@ -26,4 +27,6 @@ void main()
     float sun = pow(max(dot(-viewDirection, lightDir), 0.0), sunSize);
 
     FragColor = vec4(lerp(bot, top, viewDirection.y) + sun * sunColor, 1.0);
+
+    DepthColor = vec4(1);
 }

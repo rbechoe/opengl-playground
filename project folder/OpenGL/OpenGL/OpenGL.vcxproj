@@ -158,6 +158,8 @@
     <None Include="vertexSky.shader" />
     <None Include="vertimg.shader" />
     <None Include="vertModel.shader" />
+    <None Include="waterFrag.shader" />
+    <None Include="waterVert.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\backpack\ao.jpg" />

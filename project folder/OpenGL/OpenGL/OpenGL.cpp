@@ -23,7 +23,7 @@ struct MyFrameBuffer
 MyFrameBuffer screenBuffer;
 
 // forward declarations
-void RenderTerrain(glm::mat4 view, glm::mat4 projection);
+void RenderTerrain(glm::mat4 view, glm::mat4 projection, int clipDir = 0);
 void RenderSkybox(glm::mat4 view, glm::mat4 projection);
 void SetupResources();
 void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, 
@@ -32,6 +32,10 @@ void CreateFrameBuffer(int width, int height, unsigned int& frameBufferID, unsig
 void CreateSceneBuffer(int width, int height, unsigned int& frameBufferID, unsigned int& colorBufferID, unsigned int& colorBufferID2, unsigned int& depthBufferID);
 void RenderToBuffer(MyFrameBuffer to, MyFrameBuffer from, unsigned int shader);
 void RenderQuad();
+
+// water rendering
+void RenderInvertedScene(glm::mat4 projection, MyFrameBuffer targetBuffer);
+void RenderWaterPlane(glm::mat4 view, glm::mat4 projection, MyFrameBuffer shader);
 
 // settings
 float lightIntensity = 0.25;
@@ -43,7 +47,7 @@ glm::vec3 sunColor(0.85, 0.55, 0.15);
 glm::vec3 cameraPosition(posX, posY, posZ), cameraForward(0, 0, 1), cameraUp(0, 1, 0);
 
 unsigned int plane, planeSize, VAO, VBO, EBO, cubeSize;
-unsigned int skyProgram, myProgram, modelProgram, blitProgram, chromProgram, bloomProgram;
+unsigned int skyProgram, terrainProgram, modelProgram, blitProgram, chromProgram, bloomProgram, waterProgram;
 unsigned int diffuseTex, heightmapID, normalmapID, dirtID, sandID, grassID, rockID, snowID;
 int lightIntensityLoc;
 int lightColorLoc;
@@ -52,6 +56,10 @@ int width = 1280, height = 720;
 Model* backpack;
 
 MyFrameBuffer post1, post2, post3, scene;
+unsigned int defaultAttachments[1] = { GL_COLOR_ATTACHMENT0 };
+unsigned int sceneAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+
+const float WATER_HEIGHT = 25.0f;
 
 void handleInput(GLFWwindow* window, float deltaTime) {
     static bool w, s, a, d, space, ctrl, shift;
@@ -153,12 +161,12 @@ int main()
     CreateSceneBuffer(width, height, scene.ID, scene.color1, scene.color2, scene.depth);
 
     // MATRIX SETUP
-    glUseProgram(myProgram);
-    int worldLoc = glGetUniformLocation(myProgram, "world");
-    int viewLoc = glGetUniformLocation(myProgram, "view");
-    int projLoc = glGetUniformLocation(myProgram, "projection");
-    lightIntensityLoc = glGetUniformLocation(myProgram, "vLightIntensity");
-    lightColorLoc = glGetUniformLocation(myProgram, "vLightColor");
+    glUseProgram(terrainProgram);
+    int worldLoc = glGetUniformLocation(terrainProgram, "world");
+    int viewLoc = glGetUniformLocation(terrainProgram, "view");
+    int projLoc = glGetUniformLocation(terrainProgram, "projection");
+    lightIntensityLoc = glGetUniformLocation(terrainProgram, "vLightIntensity");
+    lightColorLoc = glGetUniformLocation(terrainProgram, "vLightColor");
     // END MATRIX SETUP
 
     // OPENGL SETTINGS
@@ -178,28 +186,31 @@ int main()
 
         view = glm::lookAt(cameraPosition, cameraPosition + cameraForward, cameraUp);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, post1.ID);
-
-        // clean screen
-        glClearColor(0, 0, 0, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        // render
-        RenderSkybox(view, projection);
-        RenderTerrain(view, projection);
-        for (int x = 0; x < 3; x++)
-        {
-            for (int z = 0; z < 3; z++)
+        glBindFramebuffer(GL_FRAMEBUFFER, scene.ID);
+        glDrawBuffers(2, sceneAttachments);
+            glClearColor(0, 0, 0, 1.0f);
+            glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+            // render
+            RenderSkybox(view, projection);
+            RenderTerrain(view, projection);
+            for (int x = 0; x < 3; x++)
             {
-                RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
+                for (int z = 0; z < 3; z++)
+                {
+                    RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, view, projection);
+                }
             }
-        }
-        // std::cout << glGetError() << std::endl;
-
+            // std::cout << glGetError() << std::endl;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        // render inverted water
+        RenderInvertedScene(projection, post1);
+
+        // render water
+        RenderWaterPlane(view, projection, post1);
+
         // Post Processing
-        RenderToBuffer(post2, post1, chromProgram);
+        RenderToBuffer(post2, scene, chromProgram);
         RenderToBuffer(post3, post2, bloomProgram);
         RenderToBuffer(post1, post3, blitProgram);
         RenderToBuffer(screenBuffer, post1, blitProgram);
@@ -243,23 +254,26 @@ void RenderSkybox(glm::mat4 view, glm::mat4 projection)
     glDrawElements(GL_TRIANGLES, cubeSize, GL_UNSIGNED_INT, 0);
 }
 
-void RenderTerrain(glm::mat4 view, glm::mat4 projection)
+void RenderTerrain(glm::mat4 view, glm::mat4 projection, int clipDir)
 {
-    glUseProgram(myProgram);
+    glUseProgram(terrainProgram);
     glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
     glm::mat4 world = glm::mat4(1.0f);
 
     world = glm::translate(world, glm::vec3(0, 0, 0));
 
-    glUniformMatrix4fv(glGetUniformLocation(myProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
-    glUniformMatrix4fv(glGetUniformLocation(myProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(myProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3fv(glGetUniformLocation(myProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
+    glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
+    glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(terrainProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform3fv(glGetUniformLocation(terrainProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
 
     // sun cycle
     float t = glfwGetTime();
-    glUniform3f(glGetUniformLocation(myProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
+    glUniform3f(glGetUniformLocation(terrainProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
+
+    glUniform1f(glGetUniformLocation(terrainProgram, "waterHeight"), WATER_HEIGHT);
+    glUniform1i(glGetUniformLocation(terrainProgram, "clipDir"), clipDir);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, heightmapID);
@@ -279,6 +293,7 @@ void RenderTerrain(glm::mat4 view, glm::mat4 projection)
 
     glBindVertexArray(plane);
     glDrawElements(GL_TRIANGLES, planeSize, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 void SetupResources()
@@ -405,10 +420,14 @@ void SetupResources()
     CreateShader("chrom.shader", GL_FRAGMENT_SHADER, chrom);
     CreateShader("bloom.shader", GL_FRAGMENT_SHADER, bloom);
 
-    myProgram = glCreateProgram();
-    glAttachShader(myProgram, vertShader);
-    glAttachShader(myProgram, fragShader);
-    glLinkProgram(myProgram);
+    unsigned int vertWater, fragWater;
+    CreateShader("waterVert.shader", GL_VERTEX_SHADER, vertWater);
+    CreateShader("waterFrag.shader", GL_FRAGMENT_SHADER, fragWater);
+
+    terrainProgram = glCreateProgram();
+    glAttachShader(terrainProgram, vertShader);
+    glAttachShader(terrainProgram, fragShader);
+    glLinkProgram(terrainProgram);
 
     skyProgram = glCreateProgram();
     glAttachShader(skyProgram, vertSky);
@@ -435,6 +454,11 @@ void SetupResources()
     glAttachShader(bloomProgram, bloom);
     glLinkProgram(bloomProgram);
 
+    waterProgram = glCreateProgram();
+    glAttachShader(waterProgram, vertWater);
+    glAttachShader(waterProgram, fragWater);
+    glLinkProgram(waterProgram);
+
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
     glDeleteShader(vertSky);
@@ -445,17 +469,24 @@ void SetupResources()
     glDeleteShader(vertImg);
     glDeleteShader(chrom);
     glDeleteShader(bloom);
+    glDeleteShader(vertWater);
+    glDeleteShader(fragWater);
     // END SHADER PROGRAM
 
     // set terrain textures
-    glUseProgram(myProgram);
-    glUniform1i(glGetUniformLocation(myProgram, "heightmap"), 0);
-    glUniform1i(glGetUniformLocation(myProgram, "normalmap"), 1);
-    glUniform1i(glGetUniformLocation(myProgram, "dirt"), 2);
-    glUniform1i(glGetUniformLocation(myProgram, "sand"), 3);
-    glUniform1i(glGetUniformLocation(myProgram, "grass"), 4);
-    glUniform1i(glGetUniformLocation(myProgram, "rock"), 5);
-    glUniform1i(glGetUniformLocation(myProgram, "snow"), 6);
+    glUseProgram(terrainProgram);
+    glUniform1i(glGetUniformLocation(terrainProgram, "heightmap"), 0);
+    glUniform1i(glGetUniformLocation(terrainProgram, "normalmap"), 1);
+    glUniform1i(glGetUniformLocation(terrainProgram, "dirt"), 2);
+    glUniform1i(glGetUniformLocation(terrainProgram, "sand"), 3);
+    glUniform1i(glGetUniformLocation(terrainProgram, "grass"), 4);
+    glUniform1i(glGetUniformLocation(terrainProgram, "rock"), 5);
+    glUniform1i(glGetUniformLocation(terrainProgram, "snow"), 6);
+
+    glUseProgram(waterProgram);
+    glUniform1i(glGetUniformLocation(waterProgram, "SceneColor"), 0);
+    glUniform1i(glGetUniformLocation(waterProgram, "SceneDepth"), 1);
+    glUniform1i(glGetUniformLocation(waterProgram, "InvertedScene"), 2);
 }
 
 void RenderModel(Model* model, unsigned int shader, glm::vec3 position, glm::vec3 rotation, float scale, glm::mat4 view, glm::mat4 projection)
@@ -582,9 +613,11 @@ void RenderToBuffer(MyFrameBuffer to, MyFrameBuffer from, unsigned int shader)
 
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, from.color1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, from.color2);
 
     RenderQuad();
 
@@ -619,4 +652,76 @@ void RenderQuad()
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
+}
+
+void RenderInvertedScene(glm::mat4 projection, MyFrameBuffer targetBuffer)
+{
+    // inverted view matrix
+    glm::vec3 invertPos = cameraPosition;
+    invertPos.y = -invertPos.y + WATER_HEIGHT * 2;
+    glm::vec3 invertUp = glm::reflect(cameraUp, glm::vec3(0, 1, 0));
+    glm::vec3 invertTarget = cameraPosition + cameraForward;
+    invertTarget.y = -invertTarget.y + WATER_HEIGHT * 2;
+
+    glm::mat4 invertView = glm::lookAt(invertPos, invertTarget, invertUp);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer.ID);
+    glDrawBuffers(2, defaultAttachments);
+        glClearColor(0, 0, 0, 1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        glm::vec3 temp = cameraPosition;
+        cameraPosition = invertPos;
+
+        // render
+        RenderSkybox(invertView, projection);
+        RenderTerrain(invertView, projection, -1);
+        for (int x = 0; x < 3; x++)
+        {
+            for (int z = 0; z < 3; z++)
+            {
+                RenderModel(backpack, modelProgram, glm::vec3(50 * x, 50, 50 * z), glm::vec3(0), 10, invertView, projection);
+            }
+        }
+
+        cameraPosition = temp;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderWaterPlane(glm::mat4 view, glm::mat4 projection, MyFrameBuffer invertSource)
+{
+    // shader
+    glUseProgram(waterProgram);
+
+    // buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, scene.ID);
+    glDrawBuffers(2, sceneAttachments);
+
+    // world matrix
+    glm::mat4 world = glm::mat4(1.0f);
+    world = glm::translate(world, glm::vec3(0, 0, 0));
+
+    // settings
+    glUniformMatrix4fv(glGetUniformLocation(waterProgram, "world"), 1, GL_FALSE, glm::value_ptr(world));
+    glUniformMatrix4fv(glGetUniformLocation(waterProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(waterProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform3fv(glGetUniformLocation(waterProgram, "cameraPosition"), 1, glm::value_ptr(cameraPosition));
+    float t = glfwGetTime();
+    glUniform3f(glGetUniformLocation(waterProgram, "lightDirection"), glm::cos(t), -0.5f, glm::sin(t));
+    glUniform1f(glGetUniformLocation(waterProgram, "waterHeight"), WATER_HEIGHT);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, scene.color1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, scene.color2);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, invertSource.color1);
+
+    // render plane
+    glBindVertexArray(plane);
+    glDrawElements(GL_TRIANGLES, planeSize, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    // unbind
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

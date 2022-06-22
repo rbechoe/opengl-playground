@@ -65,6 +65,12 @@
     <None Include="bloom.shader">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="waterVert.shader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="waterFrag.shader">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="sand.jpg">

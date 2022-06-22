@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 DepthColor;
 
 in float lightIntensity;
 in vec3 lightColor;
@@ -15,13 +16,23 @@ uniform sampler2D dirt, sand, grass, rock, snow;
 uniform vec3 lightDirection;
 uniform vec3 cameraPosition;
 
+uniform float waterHeight;
+uniform int clipDir;
+
 vec3 lerp(vec3 a, vec3 b, float t)
 {
     return a + (b - a) * t;
 }
 
+void clip(float d)
+{
+    if (d < 0) discard;
+}
+
 void main() 
 {
+    clip(clipDir * (waterHeight - worldPixel.y));
+
     vec3 normalColor = texture(normalmap, uv).rbg * 2 - 1;
     normalColor.b = -normalColor.b;
 
@@ -47,4 +58,5 @@ void main()
     vec3 bot = vec3(188 / 255.0, 214 / 255.0, 231 / 255.0);
 
     FragColor = vec4(lerp(diffuse * light, bot, fogAmount), 1.0);
+    DepthColor = vec4(d / 100);
 }
