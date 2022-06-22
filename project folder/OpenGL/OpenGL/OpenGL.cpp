@@ -50,6 +50,9 @@ void handleInput(GLFWwindow* window, float deltaTime) {
     float sensitivity = 33.0f * deltaTime;
     float step = speed * deltaTime;
 
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)				w = true;
     else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)		w = false;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)				s = true;
@@ -108,7 +111,6 @@ int main()
     std::cout << "Konichiwa World!\n";
 
     glfwInit();
-    glfwWindowHint(GLFW_SAMPLES, samples); // used for MSAA
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -264,11 +266,6 @@ void RenderTerrain(glm::mat4 view, glm::mat4 projection)
     glBindTexture(GL_TEXTURE_2D, rockID);
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_2D, snowID);
-
-    // multisample logic
-    //glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, dirtID);
-    //glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
-    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, dirtID, 0);
 
     glBindVertexArray(plane);
     glDrawElements(GL_TRIANGLES, planeSize, GL_UNSIGNED_INT, 0);
@@ -487,18 +484,27 @@ void CreateFrameBuffer(int width, int height, unsigned int &frameBufferID, unsig
     glGenTextures(1, &colorBufferID);
     glBindTexture(GL_TEXTURE_2D, colorBufferID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
-    // depth buffer
+    // depth buffer - used for MSAA logic
+    unsigned int textureColorBufferMultiSampled;
+    glGenTextures(1, &textureColorBufferMultiSampled);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
+    glTexImage2DMultisample(GL_PROXY_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, width, height, GL_TRUE);
+    glBindTexture(GL_PROXY_TEXTURE_2D_MULTISAMPLE, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled, 0);
+
     glGenRenderbuffers(1, &depthBufferID);
     glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     // attach buffers
     glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBufferID, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
